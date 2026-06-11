@@ -2,10 +2,10 @@
 #SBATCH --job-name=re_sam2bam
 #SBATCH --partition=batch
 #SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=40
+#SBATCH --ntasks=4
+#SBATCH --cpus-per-task=20
 #SBATCH --mem=32G
-#SBATCH --time=10:00:00
+#SBATCH --time=2-10:00:00
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
 
@@ -42,7 +42,7 @@ module load SAMtools/1.21-GCC-13.3.0
 module load BCFtools/1.21-GCC-13.3.0
 
 # Index the complete genome of C_illinoinensisOaxaca_genomics
-#bwa index data/genomes/C_illinoinensisOaxaca_genomic.fna
+bwa index data/genomes/Carya_illinoinensis_var_87MX3.HAP1.mainGenome.fasta
 
 # After indexing, allignment needs to be done
 for file in raw_data/*.txt.trimmed_seqs.txt
@@ -53,21 +53,21 @@ sample=$(basename "$file" .txt.trimmed_seqs.txt)
 
 echo "processing $sample"
 
-#bwa mem -t 40 data/genomes/C_illinoinensisOaxaca_genomic.fna "$file" > results/re_sam/${sample}.sam
+bwa mem -t 40 data/genomes/Carya_illinoinensis_var_87MX3.HAP1.mainGenome.fasta "$file" > results/re_sam/${sample}.sam
 
 
 # Convert sam file to bam file
-#samtools view -@40 -S -b results/re_sam/$sample.sam > results/bam/$sample.bam
+samtools view -@40 -b results/re_sam/$sample.sam > results/bam/$sample.bam
 
 
 # Sorting the bam files for indexing and visualization
-#samtools sort -@40 results/bam/${sample}.bam -o results/bam/${sample}.sorted.bam
+samtools sort -@40 results/bam/${sample}.bam -o results/bam/${sample}.sorted.bam
 
 # Indexing the sorted bam files
-#samtools index results/bam/${sample}.sorted.bam
+samtools index results/bam/${sample}.sorted.bam
 
 # Generate bcf file
-#bcftools mpileup -O b -o results/bcf/${sample}.bcf -f data/genomes/C_illinoinensisOaxaca_genomic.fna  results/bam/${sample}.sorted.bam
+bcftools mpileup -O b -o results/bcf/${sample}.bcf -f data/genomes/Carya_illinoinensis_var_87MX3.HAP1.mainGenome.fasta results/bam/${sample}.sorted.bam
 
 # Generate vcf file
 bcftools call --ploidy 2 -m -v -o results/vcf/${sample}.vcf results/bcf/${sample}.bcf

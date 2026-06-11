@@ -1,43 +1,29 @@
-#!/bin/bash
-#SBATCH --job-name=vcf_merge
-#SBATCH --partition=batch
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=10
-#SBATCH --mem=4G
-#SBATCH --time=2-10:00:00
-#SBATCH --output=logs/%x_%j.out
-#SBATCH --error=logs/%x_%j.err
-
-
-set -e  #Stop scripts if command fails
-
-# Load the module 
+ # Load the module 
 module load BCFtools/1.21-GCC-13.3.0
 
 
 # vcf is block gzip (bgzipped) before merging
 # VCF file is a large file, and it is easier to merge these files if they are zipped 
 
-for file in results/vcf/*.vcf
-do
-bgzip -c ${file} > ${file}.gz
-done
+#for file in results/vcf/*.vcf
+#do
+#bgzip -c ${file} > ${file}.gz
+#done
 
 
 # Index each compressed file
-for file in results/vcf/*.vcf.gz
-do
-bcftools index ${file}
-done
+#for file in results/vcf/*.vcf.gz
+#do
+#bcftools index ${file}
+#done
 
 
 # Merge all individuals into one file
-bcftools merge -Oz -o results/vcf/GBS_merged_vcf.gz results/vcf/*.vcf.gz
+#bcftools merge -Oz -o results/vcf/GBS_merged_vcf.gz results/vcf/*.vcf.gz
 
 
 #Decompress to plain vcf file
-gunzip -c results/vcf/GBS_merged_vcf.gz > results/vcf/GBS_merged.vcf
+#gunzip -c results/vcf/GBS_merged_vcf.gz > results/vcf/GBS_merged.vcf
 
 
 #Filter the merged vcf based on the quality scores and the depth
