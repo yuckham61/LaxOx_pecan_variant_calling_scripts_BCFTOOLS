@@ -168,33 +168,62 @@ module load SAMtools/1.21-GCC-13.3.0
 #We are using MAPQ >= 20, looking at the distribution of map quality reads and spliting lakota reads to Mahan and major, and Hap1 & Hap2 of Oaxaca
 
 # Note: GaLxO_0291 was already processed by accident - it will simply be overwritten, which is fine
+#
+#for LAKOTA_FILE in "$FILTDIR"/*.Lakota.bam
+#do
+#    SAMPLE=$(basename "$LAKOTA_FILE" .Lakota.bam)
+#    OAXACA_FILE="$FILTDIR/${SAMPLE}.Oaxaca.bam"
+#
+#    # ── Split Lakota into Major vs Mahan, MAPQ >= 20 ──────────
+#    samtools view -h -q 20 "$LAKOTA_FILE" | \
+#        awk 'substr($1,1,1)=="@" || $3 ~ /^Lakota_Major/' | \
+#        samtools sort -@ 4 -o "$HAPDIR/${SAMPLE}.Major.bam"
+#    samtools index "$HAPDIR/${SAMPLE}.Major.bam"
+#
+#    samtools view -h -q 20 "$LAKOTA_FILE" | \
+#        awk 'substr($1,1,1)=="@" || $3 ~ /^Lakota_Mahan/' | \
+#        samtools sort -@ 4 -o "$HAPDIR/${SAMPLE}.Mahan.bam"
+#    samtools index "$HAPDIR/${SAMPLE}.Mahan.bam"
+#
+#    # ── Split Oaxaca into Hap1 vs Hap2, MAPQ >= 20 ────────────
+#    samtools view -h -q 20 "$OAXACA_FILE" | \
+#        awk 'substr($1,1,1)=="@" || $3 ~ /^Oaxaca_Hap1/' | \
+#        samtools sort -@ 4 -o "$HAPDIR/${SAMPLE}.Hap1.bam"
+#    samtools index "$HAPDIR/${SAMPLE}.Hap1.bam"
+#
+#    samtools view -h -q 20 "$OAXACA_FILE" | \
+#        awk 'substr($1,1,1)=="@" || $3 ~ /^Oaxaca_Hap2/' | \
+#        samtools sort -@ 4 -o "$HAPDIR/${SAMPLE}.Hap2.bam"
+#    samtools index "$HAPDIR/${SAMPLE}.Hap2.bam"
+#
+#done
 
-for LAKOTA_FILE in "$FILTDIR"/*.Lakota.bam
-do
-    SAMPLE=$(basename "$LAKOTA_FILE" .Lakota.bam)
-    OAXACA_FILE="$FILTDIR/${SAMPLE}.Oaxaca.bam"
+# Again to look at the read counts
+# In terminal
 
-    # ── Split Lakota into Major vs Mahan, MAPQ >= 20 ──────────
-    samtools view -h -q 20 "$LAKOTA_FILE" | \
-        awk 'substr($1,1,1)=="@" || $3 ~ /^Lakota_Major/' | \
-        samtools sort -@ 4 -o "$HAPDIR/${SAMPLE}.Major.bam"
-    samtools index "$HAPDIR/${SAMPLE}.Major.bam"
+# To look at the bam file
+# samtools view -c GBS_haplotype_phasing_results/haplotype_bam/GaLxO_0001_s14_PstI_Comb_seqs.Major.bam
 
-    samtools view -h -q 20 "$LAKOTA_FILE" | \
-        awk 'substr($1,1,1)=="@" || $3 ~ /^Lakota_Mahan/' | \
-        samtools sort -@ 4 -o "$HAPDIR/${SAMPLE}.Mahan.bam"
-    samtools index "$HAPDIR/${SAMPLE}.Mahan.bam"
+# To look at the file size
+#ls -la GBS_haplotype_phasing_results/haplotype_bam/*.bam | sort -k5 -n | head -20
 
-    # ── Split Oaxaca into Hap1 vs Hap2, MAPQ >= 20 ────────────
-    samtools view -h -q 20 "$OAXACA_FILE" | \
-        awk 'substr($1,1,1)=="@" || $3 ~ /^Oaxaca_Hap1/' | \
-        samtools sort -@ 4 -o "$HAPDIR/${SAMPLE}.Hap1.bam"
-    samtools index "$HAPDIR/${SAMPLE}.Hap1.bam"
+# To look at the distribution of reads across genome-wide coverage
+#samtools idxstats GBS_haplotype_phasing_results/haplotype_bam/GaLxO_0001_s14_PstI_Comb_seqs.Major.bam
 
-    samtools view -h -q 20 "$OAXACA_FILE" | \
-        awk 'substr($1,1,1)=="@" || $3 ~ /^Oaxaca_Hap2/' | \
-        samtools sort -@ 4 -o "$HAPDIR/${SAMPLE}.Hap2.bam"
-    samtools index "$HAPDIR/${SAMPLE}.Hap2.bam"
 
-done
+# Even Spacing of reads along each chromosome
+#samtools depth GBS_haplotype_phasing_results/haplotype_bam/GaLxO_0001_s14_PstI_Comb_seqs.Major.bam awk '{print $1}' | uniq -c 
 
+
+# To see where the reads are coming from
+#for hap in Major Mahan Hap1 Hap2
+#do
+#    echo "=== $hap ==="
+#    samtools idxstats GBS_haplotype_phasing_results/haplotype_bam/GaLxO_0001_s14_PstI_Comb_seqs.${hap}.bam | grep "Chr12"
+#done
+#
+
+
+
+
+########################################################################################################################################
