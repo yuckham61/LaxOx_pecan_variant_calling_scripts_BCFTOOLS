@@ -37,7 +37,7 @@ module load BWA/0.7.18-GCCcore-13.3.0
 module load SAMtools/1.21-GCC-13.3.0
 
 
-############################################################################################################
+#################################################################################################################################
 # COMBINE ALL 4 GENOME ASSEMBLIES TO ONE FASTA using [cultivarName]_[hapName]_[ChrID]
 
 #OUT="$COMBDIR/combined_reference.fasta"
@@ -68,7 +68,7 @@ module load SAMtools/1.21-GCC-13.3.0
 # Index the complete genome of C_illinoinensisOaxaca_genomics
 #bwa index "$OUTDIR/LaxOa_combined_reference/combined_reference.fasta"
 
-#######################################################################################
+###################################################################################################################
 #MAP EACH LIBRARY TO THIS COMBINED REFERENCE
 
 # Alignment of the GBS to the concatenated reference genome
@@ -110,7 +110,7 @@ module load SAMtools/1.21-GCC-13.3.0
 # Total number with no multiple alignment "MAPQ > 0:" and no XA tag:"
 # samtools view -q 1 GBS_haplotype_phasing_results/bam/GaLxO_0001_s14_PstI_Comb_seqs.sorted.bam | grep -v "XA:Z:" | wc -l
 
-########################################################################################
+#########################################################################################################################
 # KEEP ONLY READS THAT PERFECTLY HIT EXACTLY ONE OF THE TWO CULTIVAR (ONLY LAKOTA OR OAXACA)
 
 #STEP 3: Filter reads by cultivar specificity
@@ -158,8 +158,8 @@ module load SAMtools/1.21-GCC-13.3.0
 # Check if files are suspiciously small
 #ls -lhrt GBS_haplotype_phasing_results/filtered_bam/*.bam | awk '{print $5, $9}' | sort -k1 -h | head -10
 
-########################################################################################
-# SPLITING READS BETWEEN MAHAN and MAJOR of LAKOTA and HAP1 & HAP2 of OAXACA
+##################################################################################################################
+# SPLITING READS BETWEEN (HAPLOTYPES) MAHAN and MAJOR of LAKOTA and HAP1 & HAP2 of OAXACA
 
 # We are using MAPQ >= 20, looking at the distribution of map quality reads and spliting lakota reads to Mahan and major, and Hap1 & Hap2 of Oaxaca
 
@@ -227,3 +227,5 @@ module load SAMtools/1.21-GCC-13.3.0
 
 
 ########################################################################################################################################
+
+
