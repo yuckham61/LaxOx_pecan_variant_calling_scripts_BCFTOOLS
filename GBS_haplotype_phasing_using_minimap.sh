@@ -102,24 +102,24 @@ module load minimap2/2.29-GCCcore-13.3.0
 # Columns: sample, haplotype, chromosome, position
 # Deduplicated and sorted by chromosome and position
 #{This is breaking the reference alignment into chromosome and haplotype, and then sorting them into order from name, haplotype, chr, and numerical position }
-for file in "$FILTPAF"/*.filtered.paf
-do
-    sample=$(basename "$file" .filtered.paf)
-
-    awk '{
-        split($6, a, "_Chr")
-        print sample "\t" a[1] "\t" "Chr" a[2] "\t" $8
-    }' sample="$sample" "$file" | \
-    sort -k1,1 -k2,2 -k3,3 -k4,4n | \
-    uniq \
-    > "$MARKERDIR/${sample}.markers.txt"
-
-    done
+#for file in "$FILTPAF"/*.filtered.paf
+#do
+#    sample=$(basename "$file" .filtered.paf)
+#
+#    awk '{
+#        split($6, a, "_Chr")
+#        print sample "\t" a[1] "\t" "Chr" a[2] "\t" $8
+#    }' sample="$sample" "$file" | \
+#    sort -k1,1 -k2,2 -k3,3 -k4,4n | \
+#    uniq \
+#    > "$MARKERDIR/${sample}.markers.txt"
+#
+#    done
 
 
     # Combine all samples into one big marker table with header
-echo -e "sample\thaplotype\tchr\tposition" > "$MARKERDIR/all_samples_markers.txt"
-cat "$MARKERDIR"/*.markers.txt >> "$MARKERDIR/all_samples_markers.txt"
+#echo -e "sample\thaplotype\tchr\tposition" > "$MARKERDIR/all_samples_markers.txt"
+#cat "$MARKERDIR"/*.markers.txt >> "$MARKERDIR/all_samples_markers.txt"
 
 ## In TERMINAL
 # Count the number of total marker
@@ -134,3 +134,8 @@ cat "$MARKERDIR"/*.markers.txt >> "$MARKERDIR/all_samples_markers.txt"
 #awk 'NR>1 {print $3}' minimap2_results/markers/all_samples_markers.txt | \
 #    sort | uniq -c | sort -k2,2
 
+# per Haplotypes
+#awk 'NR>1 {print $2}' minimap2_results/markers/all_samples_markers.txt | \
+#    sort | uniq -c 
+
+#####################################################################################
