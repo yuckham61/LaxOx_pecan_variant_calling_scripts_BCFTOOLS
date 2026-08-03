@@ -18,6 +18,7 @@ OUTDIR="/scratch/ad16566/Khyathi_data"
 REFDIR="/scratch/ad16566/Khyathi_data/reference_genome"
 COMBDIR="$OUTDIR/LaxOa_combined_reference"
 RAWDIR="$OUTDIR/raw_data"
+PAF="$OUTDIR/minimap2_results/paf"
 FILTPAF="$OUTDIR/minimap2_results/filtered_paf"
 MARKERDIR="$OUTDIR/minimap2_results/markers"
 
@@ -74,7 +75,23 @@ module load minimap2/2.29-GCCcore-13.3.0
 # -p .99 = only report secondary alignments within 99% of best score
 # Filter the reads on the basis of mapping quality
 # Filter: keep only MAPQ == 60 (uniquely mapping reads)
-# and are not secondary alignments
+#Keeping the secondary alignment
+
+for file in "$RAWDIR"/*.txt.trimmed_seqs.txt
+do
+    sample=$(basename "$file" .txt.trimmed_seqs.txt)
+
+    minimap2 -x sr -p .99 -t 8 \
+        "$COMBDIR/combined_reference.mmi" \
+        "$file" | \
+        awk '$12 == 60' \
+        > "$PAF/${sample}.filtered.paf"
+
+done
+
+
+
+# and removing all the reads with secondary alignments
 
 #for file in "$RAWDIR"/*.txt.trimmed_seqs.txt
 #do
