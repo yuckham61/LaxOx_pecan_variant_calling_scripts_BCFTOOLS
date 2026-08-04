@@ -89,6 +89,9 @@ do
 
 done
 
+### Looking at the results, to see how many reads have secondary alignment (because I have removed all secondary alignment in my previous run so wanted to 
+#inspect if I have removed alot of secondary reads)
+# grep -c "tp:A:S" minimap2_results/paf/GaLxO_0001_s14_PstI_Comb_seqs.filtered.paf 
 
 
 # and removing all the reads with secondary alignments
