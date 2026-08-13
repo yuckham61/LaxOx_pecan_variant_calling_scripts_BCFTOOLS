@@ -77,17 +77,17 @@ module load minimap2/2.29-GCCcore-13.3.0
 # Filter: keep only MAPQ == 60 (uniquely mapping reads)
 #Keeping the secondary alignment
 
-for file in "$RAWDIR"/*.txt.trimmed_seqs.txt
-do
-    sample=$(basename "$file" .txt.trimmed_seqs.txt)
-
-    minimap2 -x sr -p .99 -t 8 \
-        "$COMBDIR/combined_reference.mmi" \
-        "$file" | \
-        awk '$12 == 60' \
-        > "$PAF/${sample}.filtered.paf"
-
-done
+#for file in "$RAWDIR"/*.txt.trimmed_seqs.txt
+#do
+#    sample=$(basename "$file" .txt.trimmed_seqs.txt)
+#
+#    minimap2 -x sr -p .99 -t 8 \
+#        "$COMBDIR/combined_reference.mmi" \
+#        "$file" | \
+#        awk '$12 == 60' \
+#        > "$PAF/${sample}.filtered.paf"
+#
+#done
 
 ### Looking at the results, to see how many reads have secondary alignment (because I have removed all secondary alignment in my previous run so wanted to 
 #inspect if I have removed alot of secondary reads)
