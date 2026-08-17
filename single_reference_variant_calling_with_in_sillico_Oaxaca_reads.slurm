@@ -154,10 +154,45 @@ module load HTSlib/1.23.1-GCC-13.3.0
 ###################################################
 # Merge the Oaxaca file to the existing file
 #bgzip -c results/joint_calls/filtered_progeny_final.vcf > results/joint_calls/filtered_progeny_final.vcf.gz
-tabix -p vcf results/joint_calls/filtered_progeny_final.vcf.gz
+#tabix -p vcf results/joint_calls/filtered_progeny_final.vcf.gz
 
-bcftools merge -Oz -o results/final_combined.vcf.gz \
-    results/joint_calls/filtered_progeny_final.vcf.gz \
-    results/Oaxaca_diploid.vcf.gz
+#bcftools merge -Oz -o results/final_combined.vcf.gz \
+#    results/joint_calls/filtered_progeny_final.vcf.gz \
+#    results/Oaxaca_diploid.vcf.gz
 
-bcftools index -t results/final_combined.vcf.gz
+#bcftools index -t results/final_combined.vcf.gz
+
+#gunzip -c results/final_combined.vcf.gz > results/LaxOa_final.vcf
+
+# Convert numerical genotypes to AA, AT, etc.
+awk 'BEGIN{OFS="\t"} 
+/^#/ { print; next } 
+{
+    # Column 4 is REF, Column 5 is ALT
+    ref = $4; alt = $5;
+    
+    # Loop through all sample columns starting at column 10
+    for(i=10; i<=NF; i++) {
+        # Extract only the genotype portion (before any colon info like :AD:DP)
+        split($i, format_parts, ":")
+        gt = format_parts[1]
+        
+        # Replace based on genotype matching rules
+        if (gt == "0/0" || gt == "0|0")      $i = ref ref;
+        else if (gt == "0/1" || gt == "0|1") $i = ref alt;
+        else if (gt == "1/0" || gt == "1|0") $i = alt ref;
+        else if (gt == "1/1" || gt == "1|1") $i = alt alt;
+        else if (gt == "./." || gt == ".|.") $i = "NN"; # Or "-" depending on downsteam tool
+        else                                 $i = "NN";
+    }
+    print
+}' results/LaxOa_final.vcf > results/LaxOa_nucleotides.vcf
+
+
+###############################################################
+## IN TERMINAL
+# grep -v "^##" results/LaxOa_nucleotides.vcf > results/LaxOa_for_excel.txt
+# Edit the name of the individual in excel 
+
+# Append your newly edited Excel data to the headers
+# cat results/headers.txt results/LaxOa_for_excel.txt > results/LaxOa_genotype.vcf
